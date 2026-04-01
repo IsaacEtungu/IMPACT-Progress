@@ -76,7 +76,7 @@ def process_files(qn_bank, survey_files, manager_name):
         df = df.rename(columns=mapping)
         st.write(df)
     
-        if "FARMER_CODE" in df.columns:
+        if "1200" in df.columns:
             dfs.append(df)
     
     if not dfs:
