@@ -118,6 +118,7 @@ def process_files(qn_bank, survey_files, manager_name):
     # # final = final.apply(pd.to_numeric, errors="ignore")
     # for col in final.columns:
     #     final[col] = pd.to_numeric(final[col], errors="coerce")
+    final = final.fillna("")
     
     year_series = pd.to_datetime(final.get("1106_survey_date_completion"), errors="coerce").dt.year
     
@@ -132,13 +133,6 @@ def process_files(qn_bank, survey_files, manager_name):
     final = final.dropna(subset=first_cols).reset_index(drop=True)
     
     final.columns = final.columns.str.strip().str.replace("\u200b", "", regex=True)
-    
-   st.write(
-    pd.to_numeric(
-        final['3201_sold_fresh_cherries_main_season_price_per_quantity'],
-        errors='coerce'
-    ).sum()
-)
     
     return final
 
