@@ -106,7 +106,7 @@ def process_files(qn_bank, survey_files, manager_name):
 
     df = matched[["qno_q_group", "response", "record_id", "is_numerical"]].copy()
     
-    mask = df["is_numerical"]#.fillna(False)
+    mask = df["is_numerical"].fillna(False).astype(bool)
 
     df.loc[mask, "response"] = pd.to_numeric(df.loc[mask, "response"], errors="coerce")
 
@@ -116,7 +116,7 @@ def process_files(qn_bank, survey_files, manager_name):
     final.columns.name = None
     # final = final.apply(pd.to_numeric, errors="ignore")
     for col in final.columns:
-        final[col] = pd.to_numeric(final[col], errors="ignore")
+        final[col] = pd.to_numeric(final[col], errors="ignore").fllna(final[col])
     
     year_series = pd.to_datetime(final.get("1106_survey_date_completion"), errors="coerce").dt.year
     
