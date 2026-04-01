@@ -203,10 +203,19 @@ with col_main:
     if st.session_state.final is not None:
         st.subheader("Standardized Data Preview")
         st.text(f"Records: {st.session_state.final.shape[0]}")
-        st.dataframe(st.session_state.final)
-
+        st.dataframe(st.session_state.final.head(10))
         # Distribution of surveys per field staff per cws
-        st.dataframe(pd.crosstab(st.session_state.final['1105_survey_person_field_staff'],st.session_state.final['2200_farm_related_sucafina_point']))
+        st.text(
+        "Field Staff vs CWS Distribution:\n"
+        "This table shows how survey records are distributed across field staff and CWS points,"
+        "helping to identify workload balance and coverage per field officer.")
+    
+        st.dataframe(
+            pd.crosstab(
+                st.session_state.final['1105_survey_person_field_staff'],
+                st.session_state.final['2200_farm_related_sucafina_point']
+            )
+        )
 
 
 # ---------------- RIGHT PANEL ----------------
