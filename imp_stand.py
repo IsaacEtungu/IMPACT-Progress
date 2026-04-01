@@ -86,56 +86,7 @@ def process_files(qn_bank, survey_files, manager_name):
     }
     
     survey_resp = survey_resp.rename(columns=mapping)
-    
-    # mapping = {
-    #     "TRANSDATE": 1106,
-    #     "FARMER_NAME": 1201,
-    #     "FARMER_CODE": 1200,
-    #     "USER_ACTUAL_NAME": 1105,
-    #     "Origin": 1000,
-    #     "Type": 1001,
-    #     "Supply chain": 1002,
-    #     "Coordinates": 1216
-    # }
-
-    # dfs = []
-
-    # for f in survey_files:
-    #     df = pd.read_excel(f)
-    #     df.columns = df.columns.astype(str).str.strip()
-    #     df = df.rename(columns=mapping)
-    
-    #     if 1200 in df.columns:
-    #         dfs.append(df)
-    
-    # survey_resp = pd.concat(dfs, ignore_index=True, sort=False)
-
-    # dfs = []
-
-    # for f in survey_files:
-    #     df = pd.read_excel(f)
-    #     df.columns = df.columns.astype(str).str.strip()
-    #     df = df.rename(columns=mapping)
-    
-    #     if 1200 in df.columns:
-    #         dfs.append(df)
-    
-    # if not dfs:
-    #     raise ValueError("No valid survey files with FARMER_CODE found")
-    
-    # survey_resp = dfs[0]
-    
-    # for df in dfs[1:]:
-    #     survey_resp = pd.merge(
-    #         survey_resp,
-    #         df,
-    #         on=1200,
-    #         how="outer",
-    #         suffixes=("", "_dup")
-    #     )
-
-    # survey_resp = survey_resp.loc[:, ~survey_resp.columns.str.endswith("_dup")]
-
+    st.write(survey_resp)
     # normalise column names to leading digits where possible
     survey_resp.columns = [
         re.match(r"^\d+", str(c)).group(0) if re.match(r"^\d+", str(c)) else c
