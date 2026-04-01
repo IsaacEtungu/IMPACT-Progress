@@ -106,9 +106,9 @@ def process_files(qn_bank, survey_files, manager_name):
 
     df = matched[["qno_q_group", "response", "record_id", "is_numerical"]].copy()
     
-    mask = df["is_numerical"]#.fillna(False)
+    # mask = df["is_numerical"]#.fillna(False)
 
-    df.loc[mask, "response"] = pd.to_numeric(df.loc[mask, "response"], errors="coerce")
+    # df.loc[mask, "response"] = pd.to_numeric(df.loc[mask, "response"], errors="coerce")
 
     final = df.pivot(index="record_id", columns="qno_q_group", values="response")
     
@@ -132,29 +132,6 @@ def process_files(qn_bank, survey_files, manager_name):
     st.write(final)
     
     return final
-    
-    # final.columns.name = None
-    # final = final.reset_index(drop=True)
-
-    # for col in final.columns:
-    #     final[col] = pd.to_numeric(final[col], errors="coerce")
-
-    # year_series = pd.to_datetime(
-    #     final.get("1106_survey_date_completion"),
-    #     errors="coerce"
-    # ).dt.year
-
-    # year_mode = year_series.mode()
-    # final["1003_survey_year"] = int(year_mode.iloc[0]) if not year_mode.empty else None
-
-    # final["1104_survey_person_manager"] = manager_name
-
-    # first_cols = final.columns[:4]
-    # final = final.dropna(subset=first_cols).reset_index(drop=True)
-
-    # # final.columns = final.columns.str.strip().str.replace("\u200b", "", regex=True)
-
-    # return final
 
 # ---------------- HEADER ----------------
 col_left, col_main, col_right = st.columns([2, 6, 2])
