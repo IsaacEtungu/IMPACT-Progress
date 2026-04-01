@@ -39,8 +39,8 @@ if "last_signature" not in st.session_state:
 @st.cache_data
 def load_question_bank():
     try:
-        qn_path = Path.cwd().parent / "31032026_IMPACT_Progress_Survey_Bank.xlsx"
-        return pd.read_excel(qn_path, sheet_name="stability", header=12)
+        # qn_path = Path.cwd().parent / "31032026_IMPACT_Progress_Survey_Bank.xlsx"
+        return pd.read_excel("31032026_IMPACT_Progress_Survey_Bank.xlsx", sheet_name="stability", header=12)
     except Exception:
         return None
 
