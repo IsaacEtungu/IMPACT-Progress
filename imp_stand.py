@@ -74,7 +74,6 @@ def process_files(qn_bank, survey_files, manager_name):
         df = pd.read_excel(f)
         df.columns = df.columns.astype(str).str.strip()
         df = df.rename(columns=mapping)
-        st.write(df)
     
         if "1200" in df.columns:
             dfs.append(df)
