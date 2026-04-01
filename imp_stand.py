@@ -129,7 +129,6 @@ if qn_bank is None:
 
 #     return final
 
-```python
 def process_files(qn_bank, survey_files, manager_name):
     import pandas as pd
     import re
@@ -198,7 +197,6 @@ def process_files(qn_bank, survey_files, manager_name):
     final.columns = final.columns.str.strip().str.replace("\u200b", "", regex=True)
 
     return final
-```
 
 
 # ---------------- HEADER ----------------
