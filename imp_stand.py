@@ -111,10 +111,12 @@ def process_files(qn_bank, survey_files, manager_name):
     df.loc[mask, "response"] = pd.to_numeric(df.loc[mask, "response"], errors="coerce")
 
     final = df.pivot(index="record_id", columns="qno_q_group", values="response")
-    st.write(final)
     
     final = final.reset_index(drop=True)
     final.columns.name = None
+
+    st.write(final)
+    
     # final = final.apply(pd.to_numeric, errors="ignore")
     for col in final.columns:
         final[col] = pd.to_numeric(final[col], errors="coerce")
