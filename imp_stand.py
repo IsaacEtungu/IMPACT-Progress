@@ -84,7 +84,7 @@ def process_files(qn_bank, survey_files, manager_name):
             df = df.drop_duplicates(subset=[1200])
             dfs.append(df)
     
-    from functools import reduce
+    # from functools import reduce
     
     survey_resp = reduce(
         lambda l, r: pd.merge(l, r, on="FARMER_CODE", how="outer"),
