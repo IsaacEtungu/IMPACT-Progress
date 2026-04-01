@@ -111,6 +111,10 @@ def process_files(qn_bank, survey_files, manager_name):
     df.loc[mask, "response"] = pd.to_numeric(df.loc[mask, "response"], errors="coerce")
 
     final = df.pivot(index="record_id", columns="qno_q_group", values="response")
+    
+    # 9. remove rows where all responses are missing (fully empty survey records)
+    final = final.dropna(how='all')
+
     final = final.fillna("")
     
     final = final.reset_index(drop=True)
