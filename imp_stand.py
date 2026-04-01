@@ -111,6 +111,7 @@ def process_files(qn_bank, survey_files, manager_name):
     df.loc[mask, "response"] = pd.to_numeric(df.loc[mask, "response"], errors="coerce")
 
     final = df.pivot(index="record_id", columns="qno_q_group", values="response")
+    st.write(final)
     
     final = final.reset_index(drop=True)
     final.columns.name = None
@@ -129,10 +130,10 @@ def process_files(qn_bank, survey_files, manager_name):
     first_cols = final.columns[:4]
     
     final = final.dropna(subset=first_cols).reset_index(drop=True)
-    st.write(final)
+    
     final.columns = final.columns.str.strip().str.replace("\u200b", "", regex=True)
     
-    st.write(final)
+   
     
     return final
 
