@@ -87,7 +87,7 @@ def process_files(qn_bank, survey_files, manager_name):
         survey_resp = pd.merge(
             survey_resp,
             df,
-            on="FARMER_CODE",
+            on="1200",
             how="outer",
             suffixes=("", "_dup")
         )
