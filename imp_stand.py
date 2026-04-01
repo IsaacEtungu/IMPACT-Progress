@@ -78,21 +78,33 @@ def process_files(qn_bank, survey_files, manager_name):
         if 1200 in df.columns:
             dfs.append(df)
     
-    if not dfs:
-        raise ValueError("No valid survey files with FARMER_CODE found")
-    
-    survey_resp = dfs[0]
-    
-    for df in dfs[1:]:
-        survey_resp = pd.merge(
-            survey_resp,
-            df,
-            on=1200,
-            how="outer",
-            suffixes=("", "_dup")
-        )
+    survey_resp = pd.concat(dfs, ignore_index=True, sort=False)
 
-    survey_resp = survey_resp.loc[:, ~survey_resp.columns.str.endswith("_dup")]
+    # dfs = []
+
+    # for f in survey_files:
+    #     df = pd.read_excel(f)
+    #     df.columns = df.columns.astype(str).str.strip()
+    #     df = df.rename(columns=mapping)
+    
+    #     if 1200 in df.columns:
+    #         dfs.append(df)
+    
+    # if not dfs:
+    #     raise ValueError("No valid survey files with FARMER_CODE found")
+    
+    # survey_resp = dfs[0]
+    
+    # for df in dfs[1:]:
+    #     survey_resp = pd.merge(
+    #         survey_resp,
+    #         df,
+    #         on=1200,
+    #         how="outer",
+    #         suffixes=("", "_dup")
+    #     )
+
+    # survey_resp = survey_resp.loc[:, ~survey_resp.columns.str.endswith("_dup")]
 
     # normalise column names to leading digits where possible
     survey_resp.columns = [
