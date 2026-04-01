@@ -79,12 +79,12 @@ def process_files(qn_bank, survey_files, manager_name):
         df = pd.read_excel(f)
         df.columns = df.columns.astype(str).str.strip()
     
-        if '"FARMER_CODE" in df.columns:
+        if "FARMER_CODE" in df.columns:
             df = df.drop_duplicates(subset=[FARMER_CODE])
             dfs.append(df)
     
     survey_resp = reduce(
-        lambda l, r: pd.merge(l, r, on="FARMER_CODE", how="outer"),
+        lambda l, r: pd.merge(l, r, on = "FARMER_CODE", how="outer"),
         dfs
     )
     
