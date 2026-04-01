@@ -111,7 +111,7 @@ def process_files(qn_bank, survey_files, manager_name):
             suffixes=("", "_dup")
         )
 
-survey_resp = survey_resp.loc[:, ~survey_resp.columns.str.endswith("_dup")]
+    survey_resp = survey_resp.loc[:, ~survey_resp.columns.str.endswith("_dup")]
 
     # normalize column names to leading digits where possible
     survey_resp.columns = [
