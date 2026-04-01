@@ -86,7 +86,6 @@ def process_files(qn_bank, survey_files, manager_name):
     }
     
     survey_resp = survey_resp.rename(columns=mapping)
-    st.write(survey_resp)
     # normalise column names to leading digits where possible
     survey_resp.columns = [
         re.match(r"^\d+", str(c)).group(0) if re.match(r"^\d+", str(c)) else c
@@ -94,6 +93,7 @@ def process_files(qn_bank, survey_files, manager_name):
 
     survey_resp = survey_resp.loc[
         :, survey_resp.columns.astype(str).str.fullmatch(r"\d+")]
+    st.write(survey_resp)
 
     reshape = survey_resp.melt(var_name="question", value_name="response")
 
