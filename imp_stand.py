@@ -57,6 +57,23 @@ def process_files(qn_bank, survey_files, manager_name):
     qn_bank = qn_bank.copy()
     qn_bank["qno_q_group"] = qn_bank["qno"].astype(str) + "_" + qn_bank["q_group"].astype(str)
 
+    dfs = []
+
+    for f in survey_files:
+        df = pd.read_excel(f)
+        df.columns = df.columns.astype(str).str.strip()
+    
+        dfs.append(df)
+    
+    # STEP 1: union all columns (optional but safe)
+    all_cols = sorted(set().union(*[df.columns for df in dfs]))
+    
+    dfs = [df.reindex(columns=all_cols) for df in dfs]
+    
+    # STEP 2: concatenate vertically (CORRECT)
+    survey_resp = pd.concat(dfs, ignore_index=True, sort=False)
+    
+    # STEP 3: rename AFTER concat
     mapping = {
         "TRANSDATE": 1106,
         "FARMER_NAME": 1201,
@@ -67,18 +84,31 @@ def process_files(qn_bank, survey_files, manager_name):
         "Supply chain": 1002,
         "Coordinates": 1216
     }
-
-    dfs = []
-
-    for f in survey_files:
-        df = pd.read_excel(f)
-        df.columns = df.columns.astype(str).str.strip()
-        df = df.rename(columns=mapping)
     
-        if 1200 in df.columns:
-            dfs.append(df)
+    survey_resp = survey_resp.rename(columns=mapping)
     
-    survey_resp = pd.concat(dfs, ignore_index=True, sort=False)
+    # mapping = {
+    #     "TRANSDATE": 1106,
+    #     "FARMER_NAME": 1201,
+    #     "FARMER_CODE": 1200,
+    #     "USER_ACTUAL_NAME": 1105,
+    #     "Origin": 1000,
+    #     "Type": 1001,
+    #     "Supply chain": 1002,
+    #     "Coordinates": 1216
+    # }
+
+    # dfs = []
+
+    # for f in survey_files:
+    #     df = pd.read_excel(f)
+    #     df.columns = df.columns.astype(str).str.strip()
+    #     df = df.rename(columns=mapping)
+    
+    #     if 1200 in df.columns:
+    #         dfs.append(df)
+    
+    # survey_resp = pd.concat(dfs, ignore_index=True, sort=False)
 
     # dfs = []
 
