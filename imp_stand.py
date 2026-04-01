@@ -198,7 +198,7 @@ with col_main:
     if st.session_state.final is not None:
         st.subheader("Standardized Data Preview")
         st.text(f"Records: {st.session_state.final.shape[0]}")
-        st.dataframe(st.session_state.final.head())
+        st.dataframe(st.session_state.final)
 
 
 # ---------------- RIGHT PANEL ----------------
