@@ -130,9 +130,6 @@ if qn_bank is None:
 #     return final
 
 def process_files(qn_bank, survey_files, manager_name):
-    import pandas as pd
-    import re
-
     qn_bank = qn_bank.copy()
     qn_bank["qno_q_group"] = qn_bank["qno"].astype(str) + "_" + qn_bank["q_group"].astype(str)
 
@@ -209,10 +206,9 @@ def process_files(qn_bank, survey_files, manager_name):
     first_cols = final.columns[:4]
     final = final.dropna(subset=first_cols).reset_index(drop=True)
 
-    final.columns = final.columns.str.strip().str.replace("\u200b", "", regex=True)
+    # final.columns = final.columns.str.strip().str.replace("\u200b", "", regex=True)
 
     return final
-
 
 # ---------------- HEADER ----------------
 col_left, col_main, col_right = st.columns([2, 6, 2])
