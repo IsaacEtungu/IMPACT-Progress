@@ -140,6 +140,7 @@ def process_files(qn_bank, survey_files, manager_name):
         dfs.append(df)
 
     survey_resp = pd.concat(dfs, ignore_index=True)
+    st.write(survey_resp)
 
     survey_resp.columns = [
         re.match(r"^\d+", str(c)).group(0) if re.match(r"^\d+", str(c)) else c
