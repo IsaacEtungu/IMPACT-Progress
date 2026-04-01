@@ -63,24 +63,8 @@ def process_files(qn_bank, survey_files, manager_name):
         df = pd.read_excel(f)
         df.columns = df.columns.astype(str).str.strip()
     
-        dfs.append(df)
-    
-    # # STEP 1: union all columns (optional but safe)
-    # all_cols = sorted(set().union(*[df.columns for df in dfs]))
-    
-    # dfs = [df.reindex(columns=all_cols) for df in dfs]
-    
-    # # STEP 2: concatenate vertically (CORRECT)
-    # survey_resp = pd.concat(dfs, ignore_index=True)
-
-    dfs = []
-
-    for f in survey_files:
-        df = pd.read_excel(f)
-        df.columns = df.columns.astype(str).str.strip()
-    
         if "FARMER_CODE" in df.columns:
-            df = df.drop_duplicates(subset=[FARMER_CODE])
+            df = df.drop_duplicates(subset=["FARMER_CODE"])
             dfs.append(df)
     
     survey_resp = reduce(
