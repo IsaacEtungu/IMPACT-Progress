@@ -5,9 +5,9 @@ import re
 from functools import reduce
 import io
 
+APP_VERSION = "v1.0.0"
+
 st.set_page_config(page_title="IMPACT Progress Data Standardization", layout="wide")
-# APP_VERSION = "v1.0.0"
-# st.sidebar.markdown(f"**App Version:** {APP_VERSION}")
 
 st.markdown(
     """
@@ -159,6 +159,7 @@ st.divider()
 # ---------------- LEFT PANEL ----------------
 with col_left:
     st.markdown("### 📘 About")
+    st.write(f"**App Version:** {APP_VERSION}")
     st.write("""
     This tool standardizes IMPACT Progress survey data into a clean analytical dataset
     for reporting and dashboards.
