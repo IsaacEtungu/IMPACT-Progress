@@ -115,14 +115,10 @@ def process_files(qn_bank, survey_files, manager_name):
     # 9. remove rows where all responses are missing (fully empty survey records)
     final = final.dropna(how='all')
 
-    final = final.fillna("")
+    # final = final.fillna("")
     
     final = final.reset_index(drop=True)
     final.columns.name = None
-    
-    # # final = final.apply(pd.to_numeric, errors="ignore")
-    # for col in final.columns:
-    #     final[col] = pd.to_numeric(final[col], errors="coerce")
     
     year_series = pd.to_datetime(final.get("1106_survey_date_completion"), errors="coerce").dt.year
     
@@ -151,7 +147,6 @@ with col_main:
         st.title("IMPACT Progress Data Validation")
 
 st.divider()
-
 
 # ---------------- LEFT PANEL ----------------
 with col_left:
