@@ -94,15 +94,13 @@ def process_files(qn_bank, survey_files, manager_name):
 
     survey_resp = survey_resp.loc[:, ~survey_resp.columns.str.endswith("_dup")]
 
-    survey_resp = survey_resp.loc[:, ~survey_resp.columns.str.endswith("_dup")]
-
-    # normalize column names to leading digits where possible
+    # normalise column names to leading digits where possible
     survey_resp.columns = [
         re.match(r"^\d+", str(c)).group(0) if re.match(r"^\d+", str(c)) else c
         for c in survey_resp.columns]
 
     survey_resp = survey_resp.loc[
-        :, survey_resp.columns.astype(str).str.fullmatch(r"\d{4}")]
+        :, survey_resp.columns.astype(str).str.fullmatch(r"\d+")]
 
     reshape = survey_resp.melt(var_name="question", value_name="response")
 
