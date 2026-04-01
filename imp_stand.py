@@ -101,9 +101,9 @@ def process_files(qn_bank, survey_files, manager_name):
         right_on="question",
         how="left"
     )
-    st.write(matched)
 
     matched["record_id"] = matched.groupby("qno_q_group").cumcount()
+    st.write(matched)
 
     df = matched[["qno_q_group", "response", "record_id", "is_numerical"]].copy()
 
