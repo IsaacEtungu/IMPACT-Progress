@@ -140,7 +140,7 @@ def process_files(qn_bank, survey_files, manager_name):
         dfs.append(df)
 
     survey_resp = pd.concat(dfs, ignore_index=True)
-    st.write(survey_resp)
+    # st.write(survey_resp)
 
     survey_resp.columns = [
         re.match(r"^\d+", str(c)).group(0) if re.match(r"^\d+", str(c)) else c
@@ -166,6 +166,7 @@ def process_files(qn_bank, survey_files, manager_name):
     matched["record_id"] = matched.groupby("qno_q_group").cumcount()
 
     df = matched[["qno_q_group", "response", "record_id", "is_numerical"]].copy()
+    st.write(df)
 
     mask = df["is_numerical"].fillna(False)
 
