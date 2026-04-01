@@ -106,13 +106,12 @@ def process_files(qn_bank, survey_files, manager_name):
 
     df = matched[["qno_q_group", "response", "record_id", "is_numerical"]].copy()
     
-
     mask = df["is_numerical"]#.fillna(False)
-    st.write(mask)
 
     df.loc[mask, "response"] = pd.to_numeric(df.loc[mask, "response"], errors="coerce")
 
     final = df.pivot(index="record_id", columns="qno_q_group", values="response")
+    st.write(final)
     final.columns.name = None
     final = final.reset_index(drop=True)
 
