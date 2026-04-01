@@ -1,1 +1,8 @@
+streamlit
+pandas
+pathlib
+re
+functools
+io
+numpy
 
