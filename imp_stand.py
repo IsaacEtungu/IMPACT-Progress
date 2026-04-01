@@ -205,6 +205,9 @@ with col_main:
         st.text(f"Records: {st.session_state.final.shape[0]}")
         st.dataframe(st.session_state.final)
 
+        # Distribution of surveys per field staff per cws
+        st.dataframe(pd.crosstab(final['1105_survey_person_field_staff'],final['2200_farm_related_sucafina_point']))
+
 
 # ---------------- RIGHT PANEL ----------------
 with col_right:
