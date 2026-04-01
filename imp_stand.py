@@ -91,7 +91,6 @@ def process_files(qn_bank, survey_files, manager_name):
     ]
 
     reshape = survey_resp.melt(var_name="question", value_name="response")
-    st.write(reshape)
 
     reshape["question"] = pd.to_numeric(reshape["question"], errors="coerce")
     qn_bank["qno"] = pd.to_numeric(qn_bank["qno"], errors="coerce")
@@ -102,6 +101,7 @@ def process_files(qn_bank, survey_files, manager_name):
         right_on="question",
         how="left"
     )
+    st.write(matched)
 
     matched["record_id"] = matched.groupby("qno_q_group").cumcount()
 
