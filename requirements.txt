@@ -1,7 +1,4 @@
 streamlit
 pandas
-pathlib
-functools
-io
 numpy
-
+openpyxl
