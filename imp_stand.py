@@ -133,7 +133,12 @@ def process_files(qn_bank, survey_files, manager_name):
     
     final.columns = final.columns.str.strip().str.replace("\u200b", "", regex=True)
     
-   st.write(final['3201_sold_fresh_cherries_main_season_price_per_quantity'].sum())
+   st.write(
+    pd.to_numeric(
+        final['3201_sold_fresh_cherries_main_season_price_per_quantity'],
+        errors='coerce'
+    ).sum()
+)
     
     return final
 
