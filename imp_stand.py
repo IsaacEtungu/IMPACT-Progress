@@ -71,7 +71,10 @@ def process_files(qn_bank, survey_files, manager_name):
     dfs = [df.reindex(columns=all_cols) for df in dfs]
     
     # STEP 2: concatenate vertically (CORRECT)
-    survey_resp = pd.concat(dfs, ignore_index=True, sort=False)
+    survey_resp = pd.concat(dfs, ignore_index=True)
+    
+    # remove duplicate columns
+    survey_resp = survey_resp.loc[:, ~survey_resp.columns.duplicated()]
     
     # STEP 3: rename AFTER concat
     mapping = {
