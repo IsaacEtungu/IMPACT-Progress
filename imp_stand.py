@@ -60,12 +60,17 @@ def process_files(qn_bank, survey_files, manager_name):
 
     dfs = [pd.read_excel(f) for f in survey_files]
 
-    survey_resp = reduce(
-        lambda l, r: pd.merge(l, r, on="FARMER_CODE", how="outer", suffixes=("", "_dup")),
-        dfs
-    )
+    # survey_resp = reduce(
+    #     lambda l, r: pd.merge(l, r, on="FARMER_CODE", how="outer", suffixes=("", "_dup")),
+    #     dfs
+    # )
 
-    survey_resp = survey_resp.loc[:, ~survey_resp.columns.str.endswith("_dup")]
+    # survey_resp = survey_resp.loc[:, ~survey_resp.columns.str.endswith("_dup")]
+    
+    survey_resp = pd.concat(dfs, axis=1).reset_index()
+
+    # remove duplicate columns
+    survey_resp = survey_resp.loc[:, ~survey_resp.columns.duplicated()]
 
     mapping = {
         "TRANSDATE": 1106,
