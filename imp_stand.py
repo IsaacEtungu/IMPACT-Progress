@@ -115,9 +115,9 @@ def process_files(qn_bank, survey_files, manager_name):
     final = final.reset_index(drop=True)
     final.columns.name = None
     
-    # final = final.apply(pd.to_numeric, errors="ignore")
-    for col in final.columns:
-        final[col] = pd.to_numeric(final[col], errors="coerce")
+    # # final = final.apply(pd.to_numeric, errors="ignore")
+    # for col in final.columns:
+    #     final[col] = pd.to_numeric(final[col], errors="coerce")
 
     st.write(final)
     
