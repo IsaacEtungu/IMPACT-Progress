@@ -6,7 +6,7 @@ from functools import reduce
 import io
 
 st.set_page_config(page_title="IMPACT Progress Data Standardization", layout="wide")
-APP_VERSION = "v1.0.0"
+# APP_VERSION = "v1.0.0"
 st.sidebar.markdown(f"**App Version:** {APP_VERSION}")
 
 st.markdown(
