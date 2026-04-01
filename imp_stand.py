@@ -119,6 +119,8 @@ def process_files(qn_bank, survey_files, manager_name):
 
     first_cols = final.columns[:4]
     final = final.dropna(subset=first_cols).reset_index(drop=True)
+    final.columns = final.columns.str.strip()
+    final.columns = final.columns.str.replace('\u200b','')
 
     return final
 
