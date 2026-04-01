@@ -75,7 +75,7 @@ def process_files(qn_bank, survey_files, manager_name):
         df.columns = df.columns.astype(str).str.strip()
         df = df.rename(columns=mapping)
     
-        if "1200" in df.columns:
+        if 1200 in df.columns:
             dfs.append(df)
     
     if not dfs:
@@ -87,7 +87,7 @@ def process_files(qn_bank, survey_files, manager_name):
         survey_resp = pd.merge(
             survey_resp,
             df,
-            on="1200",
+            on=1200,
             how="outer",
             suffixes=("", "_dup")
         )
