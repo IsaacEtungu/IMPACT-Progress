@@ -73,9 +73,6 @@ def process_files(qn_bank, survey_files, manager_name):
     # STEP 2: concatenate vertically (CORRECT)
     survey_resp = pd.concat(dfs, ignore_index=True)
     
-    # remove duplicate columns
-    survey_resp = survey_resp.loc[:, ~survey_resp.columns.duplicated()]
-    
     # STEP 3: rename AFTER concat
     mapping = {
         "TRANSDATE": 1106,
@@ -96,6 +93,9 @@ def process_files(qn_bank, survey_files, manager_name):
 
     survey_resp = survey_resp.loc[
         :, survey_resp.columns.astype(str).str.fullmatch(r"\d+")]
+
+    # remove duplicate columns
+    survey_resp = survey_resp.loc[:, ~survey_resp.columns.duplicated()]
     
     st.write(survey_resp)
 
