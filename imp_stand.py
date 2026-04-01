@@ -52,83 +52,7 @@ if qn_bank is None:
     st.stop()
 
 
-# # ---------------- PROCESSING FUNCTION ----------------
-# def process_files(qn_bank, survey_files, manager_name):
-
-#     qn_bank = qn_bank.copy()
-#     qn_bank["qno_q_group"] = qn_bank["qno"].astype(str) + "_" + qn_bank["q_group"].astype(str)
-
-#     dfs = [pd.read_excel(f) for f in survey_files]
-
-#     # survey_resp = reduce(
-#     #     lambda l, r: pd.merge(l, r, on="FARMER_CODE", how="outer", suffixes=("", "_dup")),
-#     #     dfs
-#     # )
-
-#     # survey_resp = survey_resp.loc[:, ~survey_resp.columns.str.endswith("_dup")]
-    
-#     survey_resp = pd.concat(dfs, axis=1).reset_index()
-
-#     # remove duplicate columns
-#     survey_resp = survey_resp.loc[:, ~survey_resp.columns.duplicated()]
-
-#     mapping = {
-#         "TRANSDATE": 1106,
-#         "FARMER_NAME": 1201,
-#         "FARMER_CODE": 1200,
-#         "USER_ACTUAL_NAME": 1105,
-#         "Origin": 1000,
-#         "Type": 1001,
-#         "Supply chain": 1002,
-#         "Coordinates": 1216
-#     }
-
-#     survey_resp = survey_resp.rename(columns=mapping)
-
-#     survey_resp.columns = [
-#         re.match(r"^\d+", str(c)).group(0) if re.match(r"^\d+", str(c)) else c
-#         for c in survey_resp.columns
-#     ]
-
-#     survey_resp = survey_resp.loc[:, survey_resp.columns.astype(str).str.fullmatch(r"\d{4}")]
-
-#     reshape = survey_resp.melt(var_name="question", value_name="response")
-
-#     reshape["question"] = pd.to_numeric(reshape["question"], errors="coerce")
-#     qn_bank["qno"] = pd.to_numeric(qn_bank["qno"], errors="coerce")
-
-#     matched = qn_bank.merge(reshape, left_on="qno", right_on="question", how="left")
-
-#     matched["record_id"] = matched.groupby("qno_q_group").cumcount()
-
-#     df = matched[['qno_q_group','response','record_id','is_numerical']]
-
-#     mask = df['is_numerical']
-
-#     df.loc[mask, 'response'] = pd.to_numeric(df.loc[mask, 'response'], errors='coerce')
-
-#     final = df.pivot(index='record_id', columns='qno_q_group', values='response')
-
-#     num_cols = df.loc[mask, 'qno_q_group'].unique()
-
-#     final[num_cols] = final[num_cols].apply(pd.to_numeric, errors='coerce')
-
-#     final = final.dropna(how='all').reset_index(drop=True)
-#     final.columns.name = None
-
-#     year_series = pd.to_datetime(final.get("1106_survey_date_completion"), errors="coerce").dt.year
-#     year_mode = year_series.mode()
-#     final["1003_survey_year"] = int(year_mode.iloc[0]) if not year_mode.empty else None
-
-#     final["1104_survey_person_manager"] = manager_name
-
-#     first_cols = final.columns[:4]
-#     final = final.dropna(subset=first_cols).reset_index(drop=True)
-#     final.columns = final.columns.str.strip()
-#     final.columns = final.columns.str.replace('\u200b','')
-
-#     return final
-
+# ---------------- PROCESSING FUNCTION ----------------
 def process_files(qn_bank, survey_files, manager_name):
     qn_bank = qn_bank.copy()
     qn_bank["qno_q_group"] = qn_bank["qno"].astype(str) + "_" + qn_bank["q_group"].astype(str)
@@ -167,6 +91,7 @@ def process_files(qn_bank, survey_files, manager_name):
     ]
 
     reshape = survey_resp.melt(var_name="question", value_name="response")
+    st.write(reshape)
 
     reshape["question"] = pd.to_numeric(reshape["question"], errors="coerce")
     qn_bank["qno"] = pd.to_numeric(qn_bank["qno"], errors="coerce")
