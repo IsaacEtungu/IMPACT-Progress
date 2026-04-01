@@ -68,17 +68,50 @@ def process_files(qn_bank, survey_files, manager_name):
         "Coordinates": 1216
     }
 
+    # dfs = []
+    # for f in survey_files:
+    #     df = pd.read_excel(f)
+    #     df.columns = df.columns.astype(str).str.strip()
+
+    #     df = df.rename(columns=mapping)
+
+    #     # keep FARMER_CODE if present
+    #     dfs.append(df)
+
+    # survey_resp = pd.concat(dfs, ignore_index=True, sort=False)
+
     dfs = []
+
     for f in survey_files:
         df = pd.read_excel(f)
         df.columns = df.columns.astype(str).str.strip()
-
         df = df.rename(columns=mapping)
+    
+        if "FARMER_CODE" in df.columns:
+            dfs.append(df)
+    
+    # survey_resp = dfs[0]
+    
+    # for df in dfs[1:]:
+    #     survey_resp = pd.merge(
+    #         survey_resp,
+    #         df,
+    #         on="FARMER_CODE",
+    #         how="outer"
+    #     )
 
-        # keep FARMER_CODE if present
-        dfs.append(df)
+    survey_resp = dfs[0]
+    
+    for df in dfs[1:]:
+        survey_resp = pd.merge(
+            survey_resp,
+            df,
+            on="FARMER_CODE",
+            how="outer",
+            suffixes=("", "_dup")
+        )
 
-    survey_resp = pd.concat(dfs, ignore_index=True, sort=False)
+survey_resp = survey_resp.loc[:, ~survey_resp.columns.str.endswith("_dup")]
 
     # normalize column names to leading digits where possible
     survey_resp.columns = [
