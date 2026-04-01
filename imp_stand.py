@@ -105,9 +105,10 @@ def process_files(qn_bank, survey_files, manager_name):
     matched["record_id"] = matched.groupby("qno_q_group").cumcount()
 
     df = matched[["qno_q_group", "response", "record_id", "is_numerical"]].copy()
-    st.write(df)
+    
 
-    mask = df["is_numerical"].fillna(False)
+    mask = df["is_numerical"]#.fillna(False)
+    st.write(mask)
 
     df.loc[mask, "response"] = pd.to_numeric(df.loc[mask, "response"], errors="coerce")
 
