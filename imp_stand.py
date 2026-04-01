@@ -130,18 +130,36 @@ if qn_bank is None:
 #     return final
 
 def process_files(qn_bank, survey_files, manager_name):
+    import pandas as pd
+    import re
+
     qn_bank = qn_bank.copy()
     qn_bank["qno_q_group"] = qn_bank["qno"].astype(str) + "_" + qn_bank["q_group"].astype(str)
+
+    mapping = {
+        "TRANSDATE": 1106,
+        "FARMER_NAME": 1201,
+        "FARMER_CODE": 1200,
+        "USER_ACTUAL_NAME": 1105,
+        "Origin": 1000,
+        "Type": 1001,
+        "Supply chain": 1002,
+        "Coordinates": 1216
+    }
 
     dfs = []
     for f in survey_files:
         df = pd.read_excel(f)
         df.columns = df.columns.astype(str).str.strip()
+
+        df = df.rename(columns=mapping)
+
+        # keep FARMER_CODE if present
         dfs.append(df)
 
-    survey_resp = pd.concat(dfs, ignore_index=True)
-    # st.write(survey_resp)
+    survey_resp = pd.concat(dfs, ignore_index=True, sort=False)
 
+    # normalize column names to leading digits where possible
     survey_resp.columns = [
         re.match(r"^\d+", str(c)).group(0) if re.match(r"^\d+", str(c)) else c
         for c in survey_resp.columns
@@ -166,7 +184,6 @@ def process_files(qn_bank, survey_files, manager_name):
     matched["record_id"] = matched.groupby("qno_q_group").cumcount()
 
     df = matched[["qno_q_group", "response", "record_id", "is_numerical"]].copy()
-    st.write(df)
 
     mask = df["is_numerical"].fillna(False)
 
@@ -177,8 +194,7 @@ def process_files(qn_bank, survey_files, manager_name):
     final = final.reset_index(drop=True)
 
     for col in final.columns:
-        if col != "record_id":
-            final[col] = pd.to_numeric(final[col], errors="coerce")
+        final[col] = pd.to_numeric(final[col], errors="coerce")
 
     year_series = pd.to_datetime(
         final.get("1106_survey_date_completion"),
