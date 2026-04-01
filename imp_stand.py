@@ -116,7 +116,7 @@ def process_files(qn_bank, survey_files, manager_name):
     final.columns.name = None
     # final = final.apply(pd.to_numeric, errors="ignore")
     for col in final.columns:
-        final[col] = pd.to_numeric(final[col], errors="ignore").fllna(final[col])
+        final[col] = pd.to_numeric(final[col], errors="coerse")
     
     year_series = pd.to_datetime(final.get("1106_survey_date_completion"), errors="coerce").dt.year
     
