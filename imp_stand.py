@@ -93,6 +93,7 @@ def process_files(qn_bank, survey_files, manager_name):
 
     survey_resp = survey_resp.loc[
         :, survey_resp.columns.astype(str).str.fullmatch(r"\d+")]
+    
     st.write(survey_resp)
 
     reshape = survey_resp.melt(var_name="question", value_name="response")
