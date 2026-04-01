@@ -68,18 +68,6 @@ def process_files(qn_bank, survey_files, manager_name):
         "Coordinates": 1216
     }
 
-    # dfs = []
-    # for f in survey_files:
-    #     df = pd.read_excel(f)
-    #     df.columns = df.columns.astype(str).str.strip()
-
-    #     df = df.rename(columns=mapping)
-
-    #     # keep FARMER_CODE if present
-    #     dfs.append(df)
-
-    # survey_resp = pd.concat(dfs, ignore_index=True, sort=False)
-
     dfs = []
 
     for f in survey_files:
@@ -90,16 +78,9 @@ def process_files(qn_bank, survey_files, manager_name):
         if "FARMER_CODE" in df.columns:
             dfs.append(df)
     
-    # survey_resp = dfs[0]
+    if not dfs:
+        raise ValueError("No valid survey files with FARMER_CODE found")
     
-    # for df in dfs[1:]:
-    #     survey_resp = pd.merge(
-    #         survey_resp,
-    #         df,
-    #         on="FARMER_CODE",
-    #         how="outer"
-    #     )
-
     survey_resp = dfs[0]
     
     for df in dfs[1:]:
@@ -111,17 +92,17 @@ def process_files(qn_bank, survey_files, manager_name):
             suffixes=("", "_dup")
         )
 
+survey_resp = survey_resp.loc[:, ~survey_resp.columns.str.endswith("_dup")]
+
     survey_resp = survey_resp.loc[:, ~survey_resp.columns.str.endswith("_dup")]
 
     # normalize column names to leading digits where possible
     survey_resp.columns = [
         re.match(r"^\d+", str(c)).group(0) if re.match(r"^\d+", str(c)) else c
-        for c in survey_resp.columns
-    ]
+        for c in survey_resp.columns]
 
     survey_resp = survey_resp.loc[
-        :, survey_resp.columns.astype(str).str.fullmatch(r"\d{4}")
-    ]
+        :, survey_resp.columns.astype(str).str.fullmatch(r"\d{4}")]
 
     reshape = survey_resp.melt(var_name="question", value_name="response")
 
