@@ -1,7 +1,7 @@
 streamlit
 pandas
 pathlib
-re
+#re
 functools
 io
 numpy
