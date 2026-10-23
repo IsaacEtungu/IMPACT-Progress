@@ -5,6 +5,8 @@ import re
 from functools import reduce
 import io
 
+APP_VERSION = "v1.0.0"
+
 st.set_page_config(page_title="IMPACT Progress Data Standardization", layout="wide")
 
 st.markdown(
@@ -39,8 +41,8 @@ if "last_signature" not in st.session_state:
 @st.cache_data
 def load_question_bank():
     try:
-        qn_path = Path.cwd().parent / "IMPACT_Progress_Survey_Bank_v2.0.xlsx"
-        return pd.read_excel(qn_path, sheet_name="stability_2.0", header=12)
+        # qn_path = Path.cwd().parent / "31032026_IMPACT_Progress_Survey_Bank.xlsx"
+        return pd.read_excel("31032026_IMPACT_Progress_Survey_Bank.xlsx", sheet_name="stability", header=12)
     except Exception:
         return None
 
@@ -54,24 +56,25 @@ if qn_bank is None:
 
 # ---------------- PROCESSING FUNCTION ----------------
 def process_files(qn_bank, survey_files, manager_name):
-
     qn_bank = qn_bank.copy()
     qn_bank["qno_q_group"] = qn_bank["qno"].astype(str) + "_" + qn_bank["q_group"].astype(str)
 
-    dfs = [pd.read_excel(f) for f in survey_files]
+    dfs = []
 
-    # survey_resp = reduce(
-        # lambda l, r: pd.merge(l, r, on="FARMER_CODE", how="outer", suffixes=("", "_dup")),
-        # dfs
-    # )
-
-    # survey_resp = survey_resp.loc[:, ~survey_resp.columns.str.endswith("_dup")]
-
-    survey_resp = pd.concat(dfs, axis=1).reset_index()
-
-    # remove duplicate columns
-    survey_resp = survey_resp.loc[:, ~survey_resp.columns.duplicated()]
-
+    for f in survey_files:
+        df = pd.read_excel(f)
+        df.columns = df.columns.astype(str).str.strip()
+    
+        if "FARMER_CODE" in df.columns:
+            #df = df.drop_duplicates(subset=["FARMER_CODE"])
+            dfs.append(df)
+    
+    survey_resp = reduce(
+        lambda l, r: pd.merge(l, r, on = "FARMER_CODE", how="outer"),
+        dfs
+    )
+    
+    # STEP 3: rename AFTER concat
     mapping = {
         "TRANSDATE": 1106,
         "FARMER_NAME": 1201,
@@ -82,51 +85,64 @@ def process_files(qn_bank, survey_files, manager_name):
         "Supply chain": 1002,
         "Coordinates": 1216
     }
-
+    
     survey_resp = survey_resp.rename(columns=mapping)
-
+    # normalise column names to leading digits where possible
     survey_resp.columns = [
         re.match(r"^\d+", str(c)).group(0) if re.match(r"^\d+", str(c)) else c
-        for c in survey_resp.columns
-    ]
+        for c in survey_resp.columns]
 
-    survey_resp = survey_resp.loc[:, survey_resp.columns.astype(str).str.fullmatch(r"\d{4}")]
+    survey_resp = survey_resp.loc[
+        :, survey_resp.columns.astype(str).str.fullmatch(r"\d+")]
+
+    # remove duplicate columns
+    survey_resp = survey_resp.loc[:, ~survey_resp.columns.duplicated()]
 
     reshape = survey_resp.melt(var_name="question", value_name="response")
 
     reshape["question"] = pd.to_numeric(reshape["question"], errors="coerce")
     qn_bank["qno"] = pd.to_numeric(qn_bank["qno"], errors="coerce")
 
-    matched = qn_bank.merge(reshape, left_on="qno", right_on="question", how="left")
+    matched = qn_bank.merge(
+        reshape,
+        left_on="qno",
+        right_on="question",
+        how="left"
+    )
 
     matched["record_id"] = matched.groupby("qno_q_group").cumcount()
 
-    df = matched[['qno_q_group','response','record_id','is_numerical']]
+    df = matched[["qno_q_group", "response", "record_id", "is_numerical"]].copy()
+    
+    mask = df["is_numerical"].fillna(False).astype(bool)
 
-    mask = df['is_numerical']
+    df.loc[mask, "response"] = pd.to_numeric(df.loc[mask, "response"], errors="coerce")
 
-    df.loc[mask, 'response'] = pd.to_numeric(df.loc[mask, 'response'], errors='coerce')
+    final = df.pivot(index="record_id", columns="qno_q_group", values="response")
+    
+    # 9. remove rows where all responses are missing (fully empty survey records)
+    final = final.dropna(how='all')
 
-    final = df.pivot(index='record_id', columns='qno_q_group', values='response')
-
-    num_cols = df.loc[mask, 'qno_q_group'].unique()
-
-    final[num_cols] = final[num_cols].apply(pd.to_numeric, errors='coerce')
-
-    final = final.dropna(how='all').reset_index(drop=True)
+    # final = final.fillna("")
+    
+    final = final.reset_index(drop=True)
     final.columns.name = None
-
+    
     year_series = pd.to_datetime(final.get("1106_survey_date_completion"), errors="coerce").dt.year
+    
     year_mode = year_series.mode()
+    
     final["1003_survey_year"] = int(year_mode.iloc[0]) if not year_mode.empty else None
-
+    
     final["1104_survey_person_manager"] = manager_name
-
+    
     first_cols = final.columns[:4]
+    
     final = final.dropna(subset=first_cols).reset_index(drop=True)
-
+    
+    # final.columns = final.columns.str.strip().str.replace("\u200b", "", regex=True)
+    
     return final
-
 
 # ---------------- HEADER ----------------
 col_left, col_main, col_right = st.columns([2, 6, 2])
@@ -140,10 +156,10 @@ with col_main:
 
 st.divider()
 
-
 # ---------------- LEFT PANEL ----------------
 with col_left:
     st.markdown("### 📘 About")
+    st.write(f"**App Version:** {APP_VERSION}")
     st.write("""
     This tool standardizes IMPACT Progress survey data into a clean analytical dataset
     for reporting and dashboards.
@@ -190,7 +206,17 @@ with col_main:
     if st.session_state.final is not None:
         st.subheader("Standardized Data Preview")
         st.text(f"Records: {st.session_state.final.shape[0]}")
-        st.dataframe(st.session_state.final.head())
+        st.dataframe(st.session_state.final.head(10))
+        # Distribution of surveys per field staff per cws
+        st.text(
+        "Field Staff vs CWS Distribution:")
+    
+        st.dataframe(
+            pd.crosstab(
+                st.session_state.final['1105_survey_person_field_staff'],
+                st.session_state.final['2200_farm_related_sucafina_point']
+            )
+        )
 
 
 # ---------------- RIGHT PANEL ----------------
@@ -273,7 +299,7 @@ with col_right:
 st.markdown(
     """
     <div style="text-align:center; color:gray; font-size:12px;">
-        © 2026 IMPACT Progress Data Tool
+        © 2026 IMPACT Progress Data Tool | isaac.etungu@sucafina.com
     </div>
     """,
     unsafe_allow_html=True
